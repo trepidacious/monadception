@@ -36,7 +36,7 @@ object Main extends App {
     } yield print
   }
 
-  // We can run apply an Edit with any F for which we have EditOps, in this case we use MapState
+  // We can apply an Edit with any F for which we have EditOps, in this case we use MapState
   // Right(Person Bob and friend Some(Alice))
   println(createAndPrint[MapState].run(StateData.empty).map(_._2))
 
