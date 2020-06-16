@@ -24,3 +24,4 @@ The obvious disadvantages are:
 - [ ] Check the wrapper monad is stack safe
 - [ ] Look into efficiency of wrapper monad compared to plain tagless final
 - [ ] Look at reducing or automating boilerplate
+- [ ] Look at `Free` as an alternative approach with less boilerplate
