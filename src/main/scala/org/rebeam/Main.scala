@@ -76,6 +76,4 @@ object Main extends App {
     } yield answer
   }
 
-  // TODO test monad laws?
-
 }
