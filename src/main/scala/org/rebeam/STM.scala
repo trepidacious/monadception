@@ -30,28 +30,21 @@ object STM {
   
   // By providing the ops again as instances of Read, we allow programs to
   // be constructed as a Read directly from basic ops, in a plain for comprehension
-  // without the need for a "wrapper function"
-  object Read {
+  // without the need for a "wrapper function". We do this as a trait so we can
+  // provide these instances in different objects for convenience
+  trait ReadBase {
     def pure[A](a: A) = new Read[A] {
       def apply[F[_]: Monad](implicit readOps: ReadOps[F]): F[A] = readOps.pure(a)
     }
     def get[A](id: Id[A]): Read[A] = new Read[A] {
       def apply[F[_]: Monad](implicit readOps: ReadOps[F]): F[A] = readOps.get(id)
     }
-
   }
 
-  // Same again for Edit
-  object Edit {
+  object Read extends ReadBase
 
-    // This is unfortunate - we repeat the basic op Monads shared with Read - can we avoid this?
-    def pure[A](a: A) = new Edit[A] {
-      def apply[F[_]: Monad](implicit editOps: EditOps[F]): F[A] = editOps.pure(a)
-    }
-
-    def get[A](id: Id[A]): Edit[A] = new Edit[A] {
-      def apply[F[_]: Monad](implicit editOps: EditOps[F]): F[A] = editOps.get(id)
-    }
+  // Add the Edit operations, building on Read operations
+  object Edit extends ReadBase {
 
     def put[A](create: Id[A] => Edit[A]): Edit[Id[A]] = new Edit[Id[A]] {
       def apply[F[_]: Monad](implicit editOps: EditOps[F]): F[Id[A]] = editOps.put(id => create(id).apply[F])
