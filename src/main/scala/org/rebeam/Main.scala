@@ -6,6 +6,7 @@ import cats.Monad
 import Monadception._
 import Implicits._
 import MapImpl._
+import STM._
 
 object Main extends App {
 

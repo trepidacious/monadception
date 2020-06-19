@@ -1,6 +1,6 @@
 package org.rebeam
 
-import Monadception._
+import STM._
 import cats.implicits._
 import cats.data.StateT
 
