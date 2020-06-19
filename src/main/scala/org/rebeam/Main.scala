@@ -7,6 +7,7 @@ import Monadception._
 import Implicits._
 import MapImpl._
 import STM._
+import Edit._
 
 object Main extends App {
 
@@ -14,7 +15,6 @@ object Main extends App {
 
   // This can perform edits - put and modify cells
   val createPerson: Edit[Person] = {
-    import Edit._
     for {
       aliceId <- put[Person](id => pure(Person(id, "Alice", None)))
       bobId <- put[Person](id => pure(Person(id, "Bob", Some(aliceId))))
@@ -24,14 +24,15 @@ object Main extends App {
 
   // This is known only to read data - get cells
   def personAndFriend(id: Id[Person]): Read[String] = {
-    import Read._
     for {
       person <- get(id)
       friend <- person.friend.traverse(get)
     } yield s"Person ${person.name} and friend ${friend.map(_.name)}"
   }
 
-  // We can use Read directly as an Edit, using Implicits.ReadAsEdit
+  // We can use Read directly as an Edit, using Monadception.Implicits.CompatibleProgram
+  // This allows conversion of any Program on one set of operations, to a Program on a 
+  // larger set of operations in a subclass.
   def createAndPrintImplicit: Edit[String] = {
     for {
       person <- createPerson
