@@ -36,7 +36,7 @@ object Monadception {
   object Implicits {
     // We can treat a Program[A, X] as a Program[A, Y] if Y <: X, i.e. if the operations in X are all contained in Y because Y is a subclass of X
     implicit class CompatibleProgram[A, X[F[_]] <: Ops[F], Y[F[_]] <: X[F]](program: Program[A, X]) extends Program[A, Y] {
-      def apply[F[_]: Monad](implicit ops: Y[F]): F[A] = program.apply[F](implicitly[Monad[F]], ops)
+      def apply[F[_]: Monad](implicit ops: Y[F]): F[A] = program.apply[F]
     }
   }
 
