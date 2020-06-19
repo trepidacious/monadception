@@ -1,8 +1,11 @@
 package org.rebeam
 
 import cats.implicits._
-import MapImpl._
 import cats.Monad
+
+import Monadception._
+import Implicits._
+import MapImpl._
 
 object Main extends App {
 
@@ -27,23 +30,8 @@ object Main extends App {
     } yield s"Person ${person.name} and friend ${friend.map(_.name)}"
   }
 
-  // We can easily include a Read in an Edit
-  def createAndPrint: Edit[String] = {
-    import Edit._
-    for {
-      person <- createPerson
-      print <- read(personAndFriend(person.id))
-    } yield print
-  }
-
-  // We can apply an Edit with any F for which we have EditOps, in this case we use MapState
-  // Right(Person Bob and friend Some(Alice))
-  println(createAndPrint[MapState].run(StateData.empty).map(_._2))
-
-  // We can use Read directly as an Edit with Implicits
+  // We can use Read directly as an Edit, using Implicits.ReadAsEdit
   def createAndPrintImplicit: Edit[String] = {
-    import Edit._
-    import Implicits._
     for {
       person <- createPerson
       print <- personAndFriend(person.id)
@@ -68,7 +56,6 @@ object Main extends App {
 
   // Calling the plain tagless from an Edit is inconvenient
   val double: Edit[Int] = {
-    import Edit._
     for {
       answer <- new Edit[Int] {
         def apply[F[_]: Monad](implicit editOps: EditOps[F]): F[Int] = doSomething[F]
